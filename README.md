@@ -1,1 +1,1 @@
-# Seoul.Here
+# React Django Boilerplate
