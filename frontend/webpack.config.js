@@ -3,40 +3,22 @@ var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
 var path = require('path')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const config = {
   context: __dirname,
   entry:  [
-    'webpack-dev-server/client?http://localhost:3000',
+    'webpack-dev-server/client?http://localhost:8080',  // WebpackDevServer host and port
     'webpack/hot/only-dev-server',
     'react-hot-loader/patch',
-    path.join(__dirname, 'src/client.js')
+    './src/client.js'
   ],
   output: {
-    path: __dirname + '/public/dist/',
-    filename: 'bundle.js',
-    publicPath: 'http://localhost:3000/frontend/public/dist/'
+    path: path.resolve('./public/dist/'),
+    filename: '[name].bundle.js',
+    publicPath: 'http://localhost:8080/public/dist/'
   },
   devtool: 'inline-source-map',
-  devServer: {
-    contentBase: path.join(__dirname, '/src/'),
-    compress: true,
-    host: 'localhost',
-    port: 3000,
-    noInfo: true,
-    quite: false,
-    historyApiFallback: true,
-    hot: true,
-    stats: {
-      assets: false,
-      colors: true,
-      version: false,
-      timings: false,
-      chunks: false,
-      chunkModules: false
-    },
-    publicPath: 'http://localhost:3000/frontend/public/dist'
-  },
   module: {
     loaders: [
       {
@@ -44,8 +26,8 @@ const config = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'es2015', 'stage-0'],
-          plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy'],
+          presets: ['react', 'es2015', 'stage-2'],
+          plugins: ['react-hot-loader/babel','react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy'],
         }
       },
       {
@@ -59,7 +41,7 @@ const config = {
         test: /\.(jpe?g|png|gif|svg|woff?2|eot|ttf)$/i,
         loader: "file-loader?name=/public/icons/[name].[ext]"
       }
-    ]
+  ]
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -74,17 +56,24 @@ const config = {
       }
     ]),
     new BundleTracker({filename: './webpack-stats.json'}),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: process.env.NODE_ENV === 'production'
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
     }),
+    new webpack.optimize.UglifyJsPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.NamedModulesPlugin(),
+    //new HtmlWebpackPlugin()
   ],
   resolve: {
     modules: [
       'node_modules',
-      'public'
-    ]
+      'public',
+      'src',
+      'public/dist/'
+    ],
+    extensions: ['.js', '.json', '.jsx', '.css']
   }
 }
 
