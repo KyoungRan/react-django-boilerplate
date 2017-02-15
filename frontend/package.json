@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "npm run clean&& cross-env NODE_ENV=production PLATFORM=web webpack -p --progress",
+    "build": "npm run clean&& cross-env NODE_ENV=production PLATFORM=web webpack --progress",
     "serve": "webpack&& webpack-dev-server",
     "clean": "rm -rf src/dist/",
     "test": "echo \"Error: no test specified\" && exit 1"

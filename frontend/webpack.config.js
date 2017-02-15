@@ -56,15 +56,11 @@ const config = {
       }
     ]),
     new BundleTracker({filename: './webpack-stats.json'}),
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
+    new webpack.optimize.UglifyJsPlugin({
+      compress: process.env.NODE_ENV == 'production' // comporess only in production build
     }),
-    new webpack.optimize.UglifyJsPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.NamedModulesPlugin(),
-    //new HtmlWebpackPlugin()
   ],
   resolve: {
     modules: [
