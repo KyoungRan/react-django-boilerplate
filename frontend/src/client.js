@@ -3,24 +3,11 @@ import 'styles/style.css'
 
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import {Router, browserHistory} from 'react-router'
-
-import {AppContainer} from 'react-hot-loader'
 // AppContainer is a necessary wrapper component for HMR
-
+import {AppContainer} from 'react-hot-loader'
 // import components
 import routes from 'routes'
-
-class Root extends Component {
-  render() {
-    return (
-      <Router history={browserHistory}>
-        {this.props.routes()}
-      </Router>
-    )
-  }
-}
-
+import Root from 'Root'
 
 const render = appRoutes => {
   ReactDOM.render(

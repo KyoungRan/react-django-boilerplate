@@ -1,4 +1,4 @@
-var debug = process.env.NODE_ENV !== 'production'
+var isDev = process.env.NODE_ENV !== 'production'
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
 var path = require('path')
@@ -7,18 +7,19 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const config = {
   context: __dirname,
-  entry:  [
+  entry: isDev? 
+  [
     'webpack-dev-server/client?http://localhost:8080',  // WebpackDevServer host and port
     'webpack/hot/only-dev-server',
     'react-hot-loader/patch',
     './src/client.js'
-  ],
+  ]:'./src/client.js',
   output: {
     path: path.resolve('./src/dist/'),
-    filename: '[name].bundle.js',
-    publicPath: 'http://localhost:8080/'
+    filename: isDev? '[name].bundle.js' : '[name].bundle.min.js',
+    publicPath: isDev? 'http://localhost:8080/' : '/'
   },
-  devtool: 'inline-source-map',
+  devtool: isDev ? 'eval' : 'source-map',
   module: {
     loaders: [
       {
@@ -39,12 +40,16 @@ const config = {
       },
       {
         test: /\.(jpe?g|png|gif|svg|woff?2|eot|ttf)$/i,
-        loader: "file-loader?name=/assets/[name].[ext]"
+        loader: "file-loader?name=/public/icons/[name].[ext]"
       }
     ]
   },
-  plugins: [
+  plugins: isDev ? 
+  [
     new webpack.HotModuleReplacementPlugin(),
+    new BundleTracker({filename: './webpack-stats.json'}),
+  ] : 
+  [
     new CopyWebpackPlugin([
       {
         from: 'src/assets',
@@ -55,10 +60,13 @@ const config = {
         to: 'styles'
       }
     ]),
-    new BundleTracker({filename: './webpack-stats.json'}),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: process.env.NODE_ENV == 'production' // comporess only in production build
+    new BundleTracker({filename: './webpack-stats-prod.json'}),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+      }
     }),
+    new webpack.optimize.UglifyJsPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.NamedModulesPlugin(),
   ],
