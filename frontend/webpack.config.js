@@ -14,9 +14,9 @@ const config = {
     './src/client.js'
   ],
   output: {
-    path: path.resolve('./public/dist/'),
+    path: path.resolve('./src/dist/'),
     filename: '[name].bundle.js',
-    publicPath: 'http://localhost:8080/public/dist/'
+    publicPath: 'http://localhost:8080/'
   },
   devtool: 'inline-source-map',
   module: {
@@ -39,20 +39,20 @@ const config = {
       },
       {
         test: /\.(jpe?g|png|gif|svg|woff?2|eot|ttf)$/i,
-        loader: "file-loader?name=/public/icons/[name].[ext]"
+        loader: "file-loader?name=/assets/[name].[ext]"
       }
-  ]
+    ]
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new CopyWebpackPlugin([
       {
-        from: 'public/images',
-        to: 'images'
+        from: 'src/assets',
+        to: 'assets'
       },
       {
-        from: 'public/css',
-        to: 'css'
+        from: 'src/styles',
+        to: 'styles'
       }
     ]),
     new BundleTracker({filename: './webpack-stats.json'}),
@@ -68,12 +68,13 @@ const config = {
   ],
   resolve: {
     modules: [
+      path.resolve(__dirname, 'src'),
       'node_modules',
-      'public',
-      'src',
-      'public/dist/'
     ],
-    extensions: ['.js', '.json', '.jsx', '.css']
+    extensions: ['.js', '.json', '.jsx', '.css'],
+    alias: {
+      'assets': path.resolve(__dirname, '/src/assets/')
+    },
   }
 }
 
