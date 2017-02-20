@@ -1,13 +1,29 @@
+// Styles
+import 'styles/style.css'
+
 import React, {Component} from 'react'
-import {render} from 'react-dom'
-
+import ReactDOM from 'react-dom'
+// AppContainer is a necessary wrapper component for HMR
+import {AppContainer} from 'react-hot-loader'
 // import components
-import App from './components/App'
-import Home from './components/Home'
+import routes from 'routes'
+import Root from 'Root'
 
-// import react router deps
-import {Route, IndexRoute, Router, browserHistory} from 'react-router'
-//import {Provider} from 'react-redux'
+const render = appRoutes => {
+  ReactDOM.render(
+    <AppContainer>
+      <Root routes={appRoutes} />
+    </AppContainer>,
+    document.getElementById('root')
+  )
+}
 
+render(routes);
 
-render(<Home />, document.getElementById('root'))
+// Hot Module Replacement API
+if (module.hot) {
+  module.hot.accept('routes', () => {
+    const newRoutes = require('routes').default
+    render(newRoutes)
+  })
+}
